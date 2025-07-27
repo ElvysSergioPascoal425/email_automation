@@ -1,0 +1,36 @@
+import smtplib
+import schedule
+import time
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# 👇 SEU EMAIL E SENHA DE APP
+remetente = "elvys.pascoal5@gmail.com"
+senha = ""  # coloque sua senha de app aqui na hora de rodar, não suba no GitHub
+destinatario = "elvys.pascoal5@gmail.com"
+
+def enviar_email():
+    msg = MIMEMultipart()
+    msg['From'] = remetente
+    msg['To'] = destinatario
+    msg['Subject'] = "📧 Envio automático a cada 5 minutos"
+    corpo = "Este é um email automático enviado pelo Python a cada 5 minutos."
+    msg.attach(MIMEText(corpo, 'plain', 'utf-8'))
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(remetente, senha)
+        server.sendmail(remetente, destinatario, msg.as_string())
+        server.quit()
+        print("✅ Email enviado com sucesso!")
+    except Exception as e:
+        print("❌ Erro ao enviar email:", e)
+
+# Agendamento a cada 5 minutos
+schedule.every(5).minutes.do(enviar_email)
+
+print("⏳ Aguardando execução (Ctrl+C para parar)...")
+while True:
+    schedule.run_pending()
+    time.sleep(10)
